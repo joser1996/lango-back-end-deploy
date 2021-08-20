@@ -35,7 +35,8 @@ app.use(cookieSession({
     maxAge: 6*60*60*1000, //6 hours
     keys: ['hanger waldo mercy dance'],
     sameSite: false,
-    secure: true
+    secure: true,
+    httpOnly: false
 }));
 
 
