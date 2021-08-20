@@ -29,10 +29,15 @@ mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${proces
 app.use(express.json());
 app.use(cors({ origin: "http://localhost:3000", credentials: true}));
 
+app.set("trust proxy", 1);
+
 app.use(cookieSession({
-    maxAge: 6*60*60*1000,
-    keys: ['hanger waldo mercy dance']
+    maxAge: 6*60*60*1000, //6 hours
+    keys: ['hanger waldo mercy dance'],
+    sameSite: false,
+    secure: true
 }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
