@@ -22,7 +22,10 @@ app.listen(process.env.PORT || 4000, () => {
 mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${process.env.MONGO_PASS}${process.env.END_MONGODB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}, () => {
+}, (err) => {
+    if (err) {
+        console.error("Failed to Connect: ", err);
+    }
     console.log("Connected to mongoose succesfully")
 });
 
