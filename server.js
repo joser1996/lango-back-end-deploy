@@ -15,7 +15,7 @@ const CardModel = require('./FlashCard');
 const FlashCard = require('./FlashCard');
 
 const app = express();
-app.listen(4000, () => {
+app.listen(process.env.PORT || 4000, () => {
     console.log("Server Started");
 });
 
