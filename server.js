@@ -169,7 +169,7 @@ app.get('/store/words', (req, res) => {
         console.error("NO query parameters")
         return res.send({error: "Query parameters weren't passed"});
     }
-    if (!res.user) {
+    if (!req.user) {
         console.error("User isnt defined log in")
         return res.send({error: "User isn't defined. Pleas Log in"});
     }
