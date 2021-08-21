@@ -192,7 +192,7 @@ app.get('/get/cards', (req, res) => {
     } else {
         console.log("Sending cards")
         FlashCard.find({user_id: userId}, (err, doc) => {
-            console.log("Doc from DB: ", doc)
+            //console.log("Doc from DB: ", doc)
             let responseObj = {
                 success: true,
                 data: doc
