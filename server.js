@@ -94,7 +94,10 @@ passport.use(new GoogleStrategy({
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
 //Step 4
 app.get('/auth/google/callback',
-  () => console.log("In callback"),
+  (req, res, next) => {
+      console.log("In callback");
+      next();
+    },
   passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
