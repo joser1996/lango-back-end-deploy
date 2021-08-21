@@ -34,14 +34,25 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true}));
 
 app.set("trust proxy", 1);
 
-app.use(cookieSession({
-    maxAge: 6*60*60*1000, //6 hours
-    keys: ['hanger waldo mercy dance'],
-    sameSite: false,
-    secure: true,
-    httpOnly: false
-}));
-
+// app.use(cookieSession({
+//     maxAge: 6*60*60*1000, //6 hours
+//     keys: ['hanger waldo mercy dance'],
+//     sameSite: false,
+//     secure: true,
+//     httpOnly: false
+// }));
+app.use(
+    session({
+        secret: "secretcode",
+        resave: true,
+        saveUninitialized: true,
+        cookie: {
+            sameSite: "none",
+            secure: true,
+            maxAge: 1000*60*60*24*7
+        }
+    })
+)
 
 app.use(passport.initialize());
 app.use(passport.session());
