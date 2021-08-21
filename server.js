@@ -200,11 +200,17 @@ app.get('/get/cards', (req, res) => {
 
 app.get('/test/db', (req, res) => {
     UserModel.find({}, (err, users) => {
-        var userMap = {};
-        users.forEach(function(user) {
-            userMap[user._id] = user;
-        });
-        res.send(userMap);
+        if(err) {
+            res.send(err)
+        } else if (users) {
+            var userMap = {};
+            users.forEach(function(user) {
+                userMap[user._id] = user;
+            });
+            res.send(userMap);
+        } else {
+            res.send("Here");
+        }
     });
 });
 
