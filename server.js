@@ -34,25 +34,25 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true}));
 
 app.set("trust proxy", 1);
 
-// app.use(cookieSession({
-//     maxAge: 6*60*60*1000, //6 hours
-//     keys: ['hanger waldo mercy dance'],
-//     sameSite: false,
-//     secure: true,
-//     httpOnly: false
-// }));
-app.use(
-    session({
-        secret: "secretcode",
-        resave: true,
-        saveUninitialized: true,
-        cookie: {
-            sameSite: "none",
-            secure: true,
-            maxAge: 1000*60*60*24*7
-        }
-    })
-)
+app.use(cookieSession({
+    maxAge: 6*60*60*1000, //6 hours
+    keys: ['hanger waldo mercy dance'],
+    sameSite: false,
+    secure: true,
+    httpOnly: false
+}));
+// app.use(
+//     session({
+//         secret: "secretcode",
+//         resave: true,
+//         saveUninitialized: true,
+//         cookie: {
+//             sameSite: "none",
+//             secure: true,
+//             maxAge: 1000*60*60*24*7
+//         }
+//     })
+// )
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -108,13 +108,6 @@ passport.use(new GoogleStrategy({
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
 //Step 4
 app.get('/auth/google/callback',
-  (req, res, next) => {
-      console.log("In callback");
-      console.log("GoogleStrategy")
-      console.log("CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
-      console.log("CLIENT_SECRET", process.env.GOOGLE_CLIENT_SECRET);
-      next();
-    },
   passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
