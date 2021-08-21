@@ -69,9 +69,7 @@ passport.deserializeUser((id, done) => {
 });
 
 //Step 2
-console.log("GoogleStrategy")
-console.log("CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
-console.log("CLIENT_SECRET", process.env.GOOGLE_CLIENT_SECRET);
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -110,6 +108,9 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }))
 app.get('/auth/google/callback',
   (req, res, next) => {
       console.log("In callback");
+      console.log("GoogleStrategy")
+      console.log("CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
+      console.log("CLIENT_SECRET", process.env.GOOGLE_CLIENT_SECRET);
       next();
     },
   passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login' }),
