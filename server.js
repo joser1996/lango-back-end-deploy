@@ -80,6 +80,7 @@ passport.use(new GoogleStrategy({
   //step 3
   function(accessToken, refreshToken, profile, cb) {
     console.log("Succesfull logged Authenticated")
+
     UserModel.findOne({ googleId: profile.id }, async (err, doc) => {
         if (err) {
             console.error(err);
@@ -196,3 +197,25 @@ app.get('/get/cards', (req, res) => {
         });
     }
 });
+
+app.get('/test/db', (req, res) => {
+    UserModel.find({}, (err, users) => {
+        var userMap = {};
+        users.forEach(function(user) {
+            userMap[user._id] = user;
+        });
+        res.send(userMap);
+    });
+});
+
+server.get('/usersList', function(req, res) {
+    User.find({}, function(err, users) {
+      var userMap = {};
+  
+      users.forEach(function(user) {
+        userMap[user._id] = user;
+      });
+  
+      res.send(userMap);  
+    });
+  });
