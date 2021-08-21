@@ -180,7 +180,7 @@ app.get('/store/words', async (req, res) => {
     });
 
     resObj = {success: true};
-    await document.save();
+    document.save();
     res.send(resObj);
 });
 
