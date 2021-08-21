@@ -23,8 +23,8 @@ mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${proces
 });
 
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000", credentials: true}));
-
+//app.use(cors({ origin: "http://localhost:3000", credentials: true})); local
+app.use(cors({ origin: "https://lango-client-deploy.vercel.app/", credentials: true}));
 app.set("trust proxy", 1);
 
 // app.use(cookieSession({
@@ -100,10 +100,10 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }))
 
 //Step 4
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login' }),
+  passport.authenticate('google', { failureRedirect: 'https://lango-client-deploy.vercel.app/login' }),
   function(_req, res) {
     // Successful authentication, redirect home.
-    res.redirect('http://localhost:3000');
+    res.redirect('https://lango-client-deploy.vercel.app/');
 });
 app.get('/', (req, res) => {res.send("Hello World")});
 
