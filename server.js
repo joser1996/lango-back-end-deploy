@@ -208,14 +208,14 @@ app.get('/test/db', (req, res) => {
     });
 });
 
-server.get('/usersList', function(req, res) {
-    User.find({}, function(err, users) {
-      var userMap = {};
+// server.get('/usersList', function(req, res) {
+//     User.find({}, function(err, users) {
+//       var userMap = {};
   
-      users.forEach(function(user) {
-        userMap[user._id] = user;
-      });
+//       users.forEach(function(user) {
+//         userMap[user._id] = user;
+//       });
   
-      res.send(userMap);  
-    });
-  });
+//       res.send(userMap);  
+//     });
+//   });
