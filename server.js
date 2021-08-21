@@ -34,25 +34,25 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true}));
 
 app.set("trust proxy", 1);
 
-app.use(cookieSession({
-    maxAge: 6*60*60*1000, //6 hours
-    keys: ['hanger waldo mercy dance'],
-    sameSite: false,
-    secure: true,
-    httpOnly: false
-}));
-// app.use(
-//     session({
-//         secret: "secretcode",
-//         resave: true,
-//         saveUninitialized: true,
-//         cookie: {
-//             sameSite: "none",
-//             secure: true,
-//             maxAge: 1000*60*60*24*7
-//         }
-//     })
-// )
+// app.use(cookieSession({
+//     maxAge: 6*60*60*1000, //6 hours
+//     keys: ['hanger waldo mercy dance'],
+//     sameSite: false,
+//     secure: true,
+//     httpOnly: false
+// }));
+app.use(
+    session({
+        secret: "secretcode",
+        resave: true,
+        saveUninitialized: true,
+        cookie: {
+            sameSite: "none",
+            secure: true,
+            maxAge: 1000*60*60*24*7
+        }
+    })
+)
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -117,7 +117,12 @@ app.get('/', (req, res) => {res.send("Hello World")});
 
 app.get('/get/user', (req, res) => {
     //console.log("USER: ", req.user);
-    res.send(req.user);
+    if (req.user) {
+        res.send(req.user);
+    } else {
+        res.send("No User FOUND")
+    }
+   
 });
 
 app.get('/translate/word', (req, res, next) => {
