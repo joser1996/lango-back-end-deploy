@@ -163,12 +163,14 @@ app.get('/translate/word', (req, res, next) => {
 
 });
 
-app.get('/store/words', async (req, res) => {
+app.get('/store/words', (req, res) => {
     let queryObj = req.query;
     if (!queryObj) {
+        console.error("NO query parameters")
         return res.send({error: "Query parameters weren't passed"});
     }
     if (!res.user) {
+        console.error("User isnt defined log in")
         return res.send({error: "User isn't defined. Pleas Log in"});
     }
     const document = new FlashCard({
