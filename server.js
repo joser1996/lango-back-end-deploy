@@ -24,7 +24,7 @@ mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${proces
 
 app.use(express.json());
 //app.use(cors({ origin: "http://localhost:3000", credentials: true})); local
-app.use(cors({ origin: "https://lango-client-deploy.vercel.app/", credentials: true}));
+app.use(cors({ origin: "https://lango-client-deploy.vercel.app", credentials: true}));
 app.set("trust proxy", 1);
 
 // app.use(cookieSession({
