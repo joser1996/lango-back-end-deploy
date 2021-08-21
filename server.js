@@ -163,10 +163,14 @@ app.get('/translate/word', (req, res, next) => {
 
 });
 
-app.get('/store/words', (req, res) => {
-    let url = req.url;
+app.get('/store/words', async (req, res) => {
     let queryObj = req.query;
-    console.log('req id: ', req.user);
+    if (!queryObj) {
+        return res.send({error: "Query parameters weren't passed"});
+    }
+    if (!res.user) {
+        return res.send({error: "User isn't defined. Pleas Log in"});
+    }
     const document = new FlashCard({
         user_id: req.user._id,
         word_one: queryObj.english,
@@ -175,8 +179,8 @@ app.get('/store/words', (req, res) => {
         correct: true
     });
 
-    resObj = {status: true};
-    document.save();
+    resObj = {success: true};
+    await document.save();
     res.send(resObj);
 });
 
