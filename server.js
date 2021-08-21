@@ -117,7 +117,6 @@ app.get('/get/user', (req, res) => {
 });
 
 app.get('/translate/word', (req, res, next) => {
-    //console.log("Got Request")
     let queryObj = req.query;
     let url = process.env.API_URL + process.env.API_KEY;
 
@@ -141,6 +140,11 @@ app.get('/translate/word', (req, res, next) => {
             if (err || (APIResHead.statusCode!= 200)) {
                 console.log("Got an API Error");
                 console.log(APIResBody);
+                let responseObj = {
+                    error: "Got an API error",
+                    errorObj: APIResBody
+                }
+                res.status(APIResHead.statusCode).send(responseObj);
             } else {
                 //console.log("Body: ", APIResBody)
                 let response = {
@@ -151,7 +155,10 @@ app.get('/translate/word', (req, res, next) => {
             }
         }
     } else {
-        next();
+        let responseObj = {
+            error: "Source language in query was not defined"
+        }
+        res.send(responseObj);
     }
 
 });
