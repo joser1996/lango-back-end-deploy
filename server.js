@@ -7,24 +7,17 @@ const cookieSession = require('cookie-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy; 
 const APIRequest = require("request");
-
 dotenv.config();
-
 const UserModel = require('./User');
-const CardModel = require('./FlashCard');
 const FlashCard = require('./FlashCard');
-
 const app = express();
-app.listen(process.env.PORT || 4000, () => {
-    console.log("Server Started");
-});
 
 mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${process.env.MONGO_PASS}${process.env.END_MONGODB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }, (err) => {
     if (err) {
-        console.error("Failed to Connect: ", err);
+        console.error('\x1b[31m',"Failed to Connect: ", err);
     }
     console.log("Connected to mongoose succesfully")
 });
@@ -79,8 +72,6 @@ passport.use(new GoogleStrategy({
   //Called on successful authentication
   //step 3
   function(accessToken, refreshToken, profile, cb) {
-    console.log("Succesfull logged Authenticated")
-
     UserModel.findOne({ googleId: profile.id }, async (err, doc) => {
         if (err) {
             console.error(err);
@@ -106,10 +97,11 @@ passport.use(new GoogleStrategy({
 
 //Step 1
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+
 //Step 4
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login' }),
-  function(req, res) {
+  function(_req, res) {
     // Successful authentication, redirect home.
     res.redirect('http://localhost:3000');
 });
@@ -117,12 +109,11 @@ app.get('/', (req, res) => {res.send("Hello World")});
 
 app.get('/get/user', (req, res) => {
     //console.log("USER: ", req.user);
+    let responseObj = {user: null};
     if (req.user) {
-        res.send(req.user);
-    } else {
-        res.send("No User FOUND")
+        responseObj.user = req.user;
     }
-   
+    res.send(responseObj);
 });
 
 app.get('/translate/word', (req, res, next) => {
@@ -212,3 +203,6 @@ app.get('/test/db', (req, res) => {
     });
 });
 
+app.listen(process.env.PORT || 4000, () => {
+    console.log("Server Started");
+});
