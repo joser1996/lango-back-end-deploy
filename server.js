@@ -21,7 +21,7 @@ mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${proces
     }
     console.log("Connected to mongoose succesfully")
 });
-
+app.disable('etag');
 app.use(express.json());
 //app.use(cors({ origin: "http://localhost:3000", credentials: true})); local
 app.use(cors({ origin: "https://lango-client-deploy.vercel.app", credentials: true}));
