@@ -72,6 +72,7 @@ passport.use(new GoogleStrategy({
   //Called on successful authentication
   //step 3
   function(accessToken, refreshToken, profile, cb) {
+    console.log("SUccesfully logged in: ", profile);
     UserModel.findOne({ googleId: profile.id }, async (err, doc) => {
         if (err) {
             console.error(err);
