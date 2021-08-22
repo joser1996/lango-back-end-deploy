@@ -108,7 +108,7 @@ app.get('/auth/google/callback',
 app.get('/', (req, res) => {res.send("Hello World")});
 
 app.get('/get/user', (req, res) => {
-    //console.log("USER: ", req.user);
+    console.log("USER: ", req.user);
     let responseObj = {user: null};
     if (req.user) {
         responseObj.user = req.user;
