@@ -38,6 +38,8 @@ if (evalBool(process.env.DEV_MODE)) {
 } else {
     console.log("Deployed Mode")
     app.use(cors({ origin: "https://lango-client-deploy.vercel.app", credentials: true}));
+    redirectFailURL = "https://lango-client-deploy.vercel.app/login"
+    redirectURL = "https://lango-client-deploy.vercel.app/"
 }
 
 
