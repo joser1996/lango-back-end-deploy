@@ -12,6 +12,10 @@ const UserModel = require('./User');
 const FlashCard = require('./FlashCard');
 const app = express();
 
+function evalBool(val) {
+    return (val === 'true' ? true : false);
+}
+
 mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${process.env.MONGO_PASS}${process.env.END_MONGODB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -23,29 +27,44 @@ mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${proces
 });
 
 app.use(express.json());
-//app.use(cors({ origin: "http://localhost:3000", credentials: true})); local
-app.use(cors({ origin: "https://lango-client-deploy.vercel.app", credentials: true}));
-app.set("trust proxy", 1);
 
-// app.use(cookieSession({
-//     maxAge: 6*60*60*1000, //6 hours
-//     keys: ['hanger waldo mercy dance'],
-//     sameSite: false,
-//     secure: true,
-//     httpOnly: false
-// }));
-app.use(
-    session({
-        secret: "secretcode",
-        resave: true,
-        saveUninitialized: true,
-        cookie: {
-            sameSite: "none",
-            secure: true,
-            maxAge: 1000*60*60*24*7
-        }
-    })
-)
+var redirectFailURL="";
+var redirectURL="";
+if (evalBool(process.env.DEV_MODE)) {
+    console.log("Developer Mode")
+    app.use(cors({ origin: "http://localhost:3000", credentials: true})); //local
+    redirectFailURL = "http://localhost:3000/login"
+    redirectURL = "http://localhost:3000/"
+} else {
+    console.log("Deployed Mode")
+    app.use(cors({ origin: "https://lango-client-deploy.vercel.app", credentials: true}));
+}
+
+
+if (evalBool(process.env.DEV_MODE)) {
+    app.use(cookieSession({
+        maxAge: 6*60*60*1000, //6 hours
+        keys: ['hanger waldo mercy dance']
+        // sameSite: false,
+        // secure: true,
+        // httpOnly: false
+    }));
+} else {
+app.set("trust proxy", 1);
+    //HEROKU
+    app.use(
+        session({
+            secret: "secretcode",
+            resave: true,
+            saveUninitialized: true,
+            cookie: {
+                sameSite: "none",
+                secure: true,
+                maxAge: 1000*60*60*24*7
+            }
+        })
+    )
+}
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -100,15 +119,16 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }))
 
 //Step 4
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: 'https://lango-client-deploy.vercel.app/login' }),
+  passport.authenticate('google', { failureRedirect: redirectFailURL }),
   function(_req, res) {
     // Successful authentication, redirect home.
-    res.redirect('https://lango-client-deploy.vercel.app/');
+    res.redirect(redirectURL);
 });
+
 app.get('/', (req, res) => {res.send("Hello World")});
 
 app.get('/get/user', (req, res) => {
-    //console.log("USER: ", req.user);
+    console.log("USER: ", req.user);
     let responseObj = {user: null};
     if (req.user) {
         responseObj.user = req.user;
