@@ -25,7 +25,7 @@ mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGO_USER}:${proces
     }
     console.log("Connected to mongoose succesfully")
 });
-
+app.disable('etag');
 app.use(express.json());
 
 var redirectFailURL="";
@@ -78,6 +78,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
     UserModel.findById(id, (err, doc) => {
+        console.log("Deserialize: ", doc);
         return done(null, doc)
     });
 });
@@ -93,6 +94,7 @@ passport.use(new GoogleStrategy({
   //Called on successful authentication
   //step 3
   function(accessToken, refreshToken, profile, cb) {
+    console.log("SUccesfully logged in: ", profile);
     UserModel.findOne({ googleId: profile.id }, async (err, doc) => {
         if (err) {
             console.error(err);
