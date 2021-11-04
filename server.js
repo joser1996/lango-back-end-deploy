@@ -210,6 +210,29 @@ app.get('/store/words', (req, res) => {
     res.send(resObj);
 });
 
+app.post('/store/cards', (req, res) => {
+    let wordPairs = req.body;
+    console.log('storing words', wordPairs);
+    if (!req.user) {
+        console.error("User isnt defined log in")
+        return res.send({error: "User isn't defined. Pleas Log in"});
+    }
+    for (const card of wordPairs) {
+        const document = new FlashCard({
+            user_id: req.user._id,
+            word_one: card.native,
+            word_two: card.translated,
+            seen: true,
+            correct: true
+        });
+        document.save();
+    }
+
+    responseObject = {success: true};
+    res.send(responseObject);
+});
+ 
+
 app.get('/get/cards', (req, res) => {
     const userId = req.user._id
     console.log("ID: ", userId);
