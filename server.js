@@ -42,6 +42,14 @@ if (evalBool(process.env.DEV_MODE)) {
     redirectURL = "https://lango-client-deploy.vercel.app/"
 }
 
+var redirectLogin="";
+if (evalBool(process.env.DEV_MODE)) {
+    redirectLogin = "http://localhost:3000/login"
+} else {
+    redirectLogin = "https://lango-client-deploy.vercel.app/login"
+}
+
+
 
 if (evalBool(process.env.DEV_MODE)) {
     app.use(cookieSession({
@@ -130,6 +138,12 @@ app.get('/auth/google/callback',
 });
 
 app.get('/', (req, res) => {res.send("Hello World")});
+
+app.get('/logout', (req, res) => {
+    console.log('LOGGIN USER OUT');
+    req.logout();
+    res.json({status: 'done', url: redirectLogin});
+});
 
 app.get('/get/user', (req, res) => {
     console.log("USER: ", req.user);
