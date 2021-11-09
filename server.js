@@ -10,6 +10,8 @@ const APIRequest = require("request");
 dotenv.config();
 const UserModel = require('./User');
 const FlashCard = require('./FlashCard');
+const DeckModel = require('./Deck');
+
 const app = express();
 
 function evalBool(val) {
@@ -157,12 +159,13 @@ app.get('/get/user', (req, res) => {
 app.get('/translate/word', (req, res, next) => {
     let queryObj = req.query;
     let url = process.env.API_URL + process.env.API_KEY;
-
+    let code = queryObj.code;
+    console.log('Recieved code: ', code);
     if (queryObj.english != undefined ) {
         let sourceWord = queryObj.english;
         let requestObj = {
             "source": "en",
-            "target": "ja",
+            "target": code,
             "q": [sourceWord] 
         }
 
@@ -227,6 +230,9 @@ app.get('/store/words', (req, res) => {
 app.post('/store/cards', (req, res) => {
     let wordPairs = req.body;
     console.log('storing words', wordPairs);
+    let queryObj = req.query;
+    console.log('Storing Deck: ', queryObj.deck)
+
     if (!req.user) {
         console.error("User isnt defined log in")
         return res.send({error: "User isn't defined. Pleas Log in"});
@@ -237,7 +243,8 @@ app.post('/store/cards', (req, res) => {
             word_one: card.native,
             word_two: card.translated,
             seen: true,
-            correct: true
+            correct: true,
+            deck: queryObj.deck
         });
         document.save();
     }
@@ -246,15 +253,90 @@ app.post('/store/cards', (req, res) => {
     res.send(responseObject);
 });
  
+app.get('/create/deck', (req, res, next) => {
+    let queryObj = req.query;
+    let deckName = queryObj.deck;
+    console.log('Attempting to create Deck: ', deckName);
+    //check to see if deck exists
+    console.log('For user: ', req.user)    
+    if (!req.user){
+        res.send(JSON.stringify({status: 'Not logged in'})) 
+        next();
+    } else {
+        console.log('ID: ', req.user._id)
+        let userId = req.user._id;
+        DeckModel.findOne({deck_name: queryObj.deck}, async (err, doc) => {
+            if (err) {
+                console.error(err);
+                res.send(JSON.stringify({status: 'fail', error: err}))
+            } else if (!doc) {
+                //deck doesn't exist
+                console.log('Creating new deck');
+                const document = new DeckModel({
+                    deck_name: deckName,
+                    user_id: userId
+                })
+                await document.save();
+                res.send(JSON.stringify({status: 'success'}))
+            } else {
+                console.log("Deck already exists");
+                res.send(JSON.stringify({status: 'duplicate'}))
+            }
+        });
+    }
+});
+
+app.get('/delete/deck', (req, res) => {
+    let deckId = req.query.deckId;
+    console.log("attempting to delete")
+    if (!req.user) {
+        res.send(JSON.stringify({status: 'Not logged in'}))
+    } else {
+        let userId = req.user._id;
+        DeckModel.findOne({_id: deckId}, async (err, doc) => {
+            if (err) {
+                console.error(err);
+                res.send(JSON.stringify({status: 'fail', error: err}))
+            } else if (!doc) {
+                console.log('Deck no longer exists');
+                res.send(JSON.stringify({status: 'fail', error: 'Doesn\'t Exist'}))
+            } else if (doc) {
+                console.log('Attempting to delete deck');
+                doc.remove();
+                res.send(JSON.stringify({status: 'success'}))
+            }
+        })
+    }
+
+});
+
+app.get('/get/decks', (req, res) => {
+    const userId = req.user._id;
+    if (userId === null) {
+        res.send({success: false})
+    } else {
+        console.log("Sending Deck objects");
+        DeckModel.find({user_id: userId}, (err, doc) => {
+            let responseObj = {
+                success: true,
+                data: doc
+            }
+            res.send(responseObj);
+        })
+    }
+});
 
 app.get('/get/cards', (req, res) => {
-    const userId = req.user._id
+    const userId = req.user._id;
+    let queryObj = req.query;
+    let deckName = queryObj.deck;
+
     console.log("ID: ", userId);
     if (userId === null) {
         res.send({success: false})
     } else {
         console.log("Sending cards")
-        FlashCard.find({user_id: userId}, (err, doc) => {
+        FlashCard.find({user_id: userId, deck: deckName}, (err, doc) => {
             //console.log("Doc from DB: ", doc)
             let responseObj = {
                 success: true,

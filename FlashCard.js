@@ -5,7 +5,8 @@ const cardSchema = new mongoose.Schema({
     word_one: String,
     word_two: String,
     seen: Boolean,
-    correct: Boolean
+    correct: Boolean,
+    deck: String
 });
 
 module.exports = mongoose.model('CardModel', cardSchema, 'flashcards');
